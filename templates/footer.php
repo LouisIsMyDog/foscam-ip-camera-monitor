@@ -2,7 +2,7 @@
 <?php if(basename($_SERVER['PHP_SELF']) != 'login.php') { ?>
 	<footer class="footer">
 		<div class="container">
-			<p class="text-muted">Copyright <?php echo date("Y",time()); ?>, Emre Bilgin </p>
+			<p class="text-muted">Copyright <?php echo date("Y",time()); ?>, EBDesigns.us </p>
 		</div>
 	</footer>
 	<?php } ?>
