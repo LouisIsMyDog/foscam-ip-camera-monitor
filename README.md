@@ -3,7 +3,7 @@ Web App for viewing Foscam ip camera ftp images, works with other cams that uplo
 
 ****Requires LAMP to be installed.
 
-To begin reading FTP images simply fill out config file located in:
+To begin reading FTP images simply fill out the config file located in:
 CCTV/config.php
 
 To setup config.php:
