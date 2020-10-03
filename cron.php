@@ -1,28 +1,25 @@
 <?php
-// define root directory
-if(!defined('__ROOT__')) {
-	
-	  define('__ROOT__', '/path/to/server/root'); // full path to server root example: /home/admin/web/monitor.capa.furniture/public_html/
+
+// Starting clock time in seconds
+$start_time = microtime(true);
+
+require_once 'index.php';
+
+if (!isset($_SESSION['settings'])) {
+
+    if ($readFiles->cameraIndex(Snapshot::$cameras)) {
+        // something to do - if you want
+    }
+    // delete old images
+    $readFiles->executeCleansing();
+    // End clock time in seconds
+    $end_time       = microtime(true);
+    $execution_time = ($end_time - $start_time); // returns time in secs
+    $execution_time = number_format($execution_time, 2, '.', ''); // format execution time
+    logAction('CRON JOB', "The script was executed in $execution_time sec.", 'cron.log');
+
+} else {
+
+    logAction('CRON JOB', '**FAILED** The script could not be executed', 'cron.log');
+
 }
-
-require_once( __ROOT__ . '/CCTV/includes/initialize.php');	
-
-if(!isset($_SESSION['user_id']) && !isset($_SESSION['user_name'])) {
-	
-		if($readFiles->camera_index(Snapshot::$dir_assets)) {
-			// something to do - if you want
-		} 
-		// delete old images
-		$readFiles->execute_cleansing();
-		
-		log_action('CRON JOB','Ran.', 'cron.log');
-	
-	}	else {
-		
-		log_action('CRON JOB','Could not run.', 'cron.log');
-		
-}
-
-
-
-?>
