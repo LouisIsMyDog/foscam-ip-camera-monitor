@@ -28,11 +28,11 @@ class DatabaseObject
         return $oject_array;
     }
 
-    public static function countAll($where = '')
+    public static function countAll()
     {
         global $database, $session;
 
-        $sql = "SELECT COUNT(*) FROM " . static::$table_name . " AS s, permissions AS p  WHERE p.user_id={$session->user_id} AND s.group_id=p.group_id {$where}";
+        $sql = "SELECT COUNT(*) FROM " . static::$table_name . " AS s, permissions AS p WHERE p.user_id={$session->user_id} AND s.group_id=p.group_id AND date(time) = '" . date("Y-m-d", strtotime($session->settings['date'])) . "'";
 
         $result_set = $database->query($sql);
         $row        = $database->fetchArray($result_set);
@@ -95,8 +95,6 @@ class DatabaseObject
 
         $attributes = $this->sanitizedAttributes();
         unset($attributes['id']);
-        //       $attributes = preg_replace("/''/i", NULL, $attributes);
-        //    error_log(implode(",", array_keys($attributes)));
         $sql = "INSERT INTO " . static::$table_name . " (";
         $sql .= join(", ", array_keys($attributes));
         $sql .= ") VALUES ('";
@@ -151,7 +149,7 @@ class DatabaseObject
         global $database, $days;
         (isset($value) && is_numeric($value)) ? null : $value = $days;
         $sql                                                  = "SELECT * FROM " . static::$table_name . " ";
-        $sql .= "WHERE time <= '" . getPastDate($value, "string") . " 23:59:59' ";
+        $sql .= "WHERE time <= '" . getPastDate($value, "string") . "'";
         logAction('filterOldDatabaseDate', $sql, 'database_object.log');
         $result_set  = $database->query($sql);
         $oject_array = array();

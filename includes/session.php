@@ -17,7 +17,6 @@ class Session
         $this->checkMessage();
         $this->checkLogin();
         $this->checkAdmin();
-
         $this->settings();
     }
 
@@ -47,12 +46,13 @@ class Session
 
     public function logout()
     {
-        foreach ($_SESSION as $key => $value) {
-            unset($_SESSION[$key]);
-        }
+        // foreach ($_SESSION as $key => $value) {
+        //     unset($_SESSION[$key]);
+        // }
 
-        $this->logged_in = false;
-        $this->is_admin  = false;
+        // $this->logged_in = false;
+        // $this->is_admin  = false;
+        session_destroy();
 
     }
 
@@ -106,36 +106,37 @@ class Session
     }
     public function settings()
     {
+        if ($_SERVER['USER'] == 'admin'):
 
-        $this->settings = $_SESSION['settings'];
+            $this->settings = $_SESSION['settings'];
 
-        $this->settings['page'] = isset($_GET['page']) ? $_GET['page'] : 1;
+            $this->settings['page'] = isset($_GET['page']) ? $_GET['page'] : 1;
 
-        if (isset($_POST['submit'])) {
-            $this->settings['date']       = isset($_POST['date']) ? $_POST['date'] : date("m/d/Y");
-            $this->settings['dateFilter'] = isset($_POST['date']) ? 1 : 0;
-            $this->settings['order']      = isset($_POST['date']) ? 'ASC' : 'DESC';
-            $this->settings['where']      = "AND date(time) = '" . date("Y-m-d", strtotime($this->settings['date'])) . "'";
-            $this->settings['page']       = isset($_POST['date']) ? 1 : $this->settings['page'];
+            if (isset($_POST['submit'])) {
+                $this->settings['date']       = isset($_POST['date']) ? $_POST['date'] : date("m/d/Y");
+                $this->settings['dateFilter'] = isset($_POST['date']) ? 1 : 0;
+                $this->settings['order']      = isset($_POST['date']) ? 'ASC' : 'DESC';
+                $this->settings['page']       = isset($_POST['date']) ? 1 : $this->settings['page'];
 
-        }
+            }
 
-        if (isset($_POST['clear'])) {
-            $this->settings['date']       = date("m/d/Y");
-            $this->settings['order']      = 'DESC';
-            $this->settings['where']      = '';
-            $this->settings['dateFilter'] = 0;
-        }
+            if (isset($_POST['clear'])) {
+                $this->settings['date']       = date("m/d/Y");
+                $this->settings['order']      = 'DESC';
+                $this->settings['dateFilter'] = 0;
+                $this->settings['page']       = 1;
+            }
 
-        if (empty($_POST)) {
-            $this->settings['order']      = isset($this->settings['order']) ? $this->settings['order'] : 'DESC';
-            $this->settings['where']      = isset($this->settings['where']) ? $this->settings['where'] : '';
-            $this->settings['dateFilter'] = isset($this->settings['dateFilter']) ? $this->settings['dateFilter'] : 0;
-            // unset($_POST);
-        }
+            if (empty($_POST)) {
+                $this->settings['order']      = isset($this->settings['order']) ? $this->settings['order'] : 'DESC';
+                $this->settings['dateFilter'] = isset($this->settings['dateFilter']) ? $this->settings['dateFilter'] : 0;
+                $this->settings['date']       = isset($this->settings['date']) ? $this->settings['date'] : date("m/d/Y");
+                // unset($_POST);
+            }
 
-        $_SESSION['settings'] = $this->settings;
+            $_SESSION['settings'] = $this->settings;
 
+        endif;
     }
     public function setItem($array)
     {

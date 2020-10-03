@@ -398,3 +398,7 @@ html {
     float: right;
   }
 }
+
+.btn-default[value=clear] {
+  margin-left: 5px;
+}

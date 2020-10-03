@@ -109,9 +109,6 @@ class Display
         $previous_id = (isset($previous_key)) ? $photo_id_array[$previous_key][0] : '';
         $next_id     = (!empty($photo_id_array[$next_key][0])) ? $photo_id_array[$next_key][0] : '';
 
-        // if (!isset($previous_id)) {$previous_id = "";}
-        // if (!isset($next_id)) {$next_id = "";}
-
         return $results = array($previous_id, $next_id);
     }
 
@@ -157,8 +154,8 @@ class Display
         $date_html .= '<div class="form-group"> <!-- Submit button -->';
         $date_html .= '<button class="btn btn-primary " name="submit" type="submit">Filter</button>';
         if ($session->settings['dateFilter'] == true) {
-            $date_html .= '</div> <!-- .form-group -->';
-            $date_html .= '<button class="btn btn-default " formmethod="post" name="clear" value="clear" type="submit">Clear</button>';
+            // $date_html .= '</div> <!-- .form-group -->';
+            $date_html .= '<button class="btn btn-default" formmethod="post" name="clear" value="clear" type="submit">Clear</button>';
         }
         $date_html .= '</div>';
         $date_html .= '</form>';

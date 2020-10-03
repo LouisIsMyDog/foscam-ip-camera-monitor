@@ -141,11 +141,31 @@ function humanFileSize($size, $unit = "")
 function getPastDate($day, $output = "")
 {
 
-    $date = date("Y-m-d"); // get todays date
+    // $date = date("Y-m-d"); // get todays date
 
-    $current_date = strtotime($date); // convert date to unix timestamp
+    // $current_date = strtotime($date); // convert date to unix timestamp
 
-    $past_date = strtotime("-$day day", $current_date); // get unix timestamp of past date
+    // $past_date = strtotime("-$day day", $current_date); // get unix timestamp of past date
 
-    return ($output == "string") ? gmdate("Y-m-d", $past_date) : $past_date; // convert past unix timestamp to string time
+    // return ($output == "string") ? gmdate("Y-m-d", $past_date) : $past_date; // convert past unix timestamp to string time
+
+    $current_date_string = date("Y-m-d"); // get todays date
+
+    $current_date_unix = strtotime($current_date_string); // convert today's date to unix timestamp
+
+    $past_date = strtotime("-$day day", $current_date_unix); // get unix timestamp of past date
+
+    $past_date_string = strftime("%Y-%m-%d", $past_date); // convert past date unix timestamp to string
+
+    $past_date_string = $past_date_string . " 23:59:59"; // add hours of past date to string
+
+    $past_date_unix = strtotime($past_date_string); // get past date unix timestamp
+
+    if ($output == "unix"):
+        return $past_date_unix;
+    endif;
+
+    if ($output == "string"):
+        return $past_date_string;
+    endif;
 }

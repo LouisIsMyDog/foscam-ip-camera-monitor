@@ -125,8 +125,9 @@ class Snapshot extends DatabaseObject
     public function checkDate()
     {
         global $days;
-        $marker = getPastDate($days);
-        return (($marker < strtotime($this->time)) && ($marker != strtotime($this->time))) ? true : false; // True if time is older than $days variable = which means save images.
+        $marker = getPastDate($days, "unix");
+        logAction('checkDate', "$marker > " . strtotime($this->time), 'snapshot.log');
+        return ($marker > strtotime($this->time)) ? true : false; // True if time is older than $days variable = which means save images.
 
     }
 
@@ -142,9 +143,9 @@ class Snapshot extends DatabaseObject
     public function deleteExistence()
     {
 
-        if (!$this->checkDate()) {
+        if ($this->checkDate()) {
 
-            $new_path_filename = __ROOT__ . $this->path . $this->filename;
+            $new_path_filename = __ROOT__ . $this->path . '/' . $this->filename;
 
             if (unlink($new_path_filename)) {
 
@@ -168,7 +169,7 @@ class Snapshot extends DatabaseObject
     public static function retrievePhotos($array)
     {
         global $session;
-        $sql = "SELECT * FROM snapshots AS s, permissions AS p  WHERE p.user_id={$session->user_id} AND s.group_id=p.group_id {$array['where']} ORDER BY time {$array['order']} LIMIT {$array['per_page']} OFFSET {$array['offset']}";
+        $sql = "SELECT * FROM snapshots AS s, permissions AS p  WHERE p.user_id={$session->user_id} AND s.group_id=p.group_id AND date(time) = '" . date("Y-m-d", strtotime($array['date'])) . "' ORDER BY time {$array['order']} LIMIT {$array['per_page']} OFFSET {$array['offset']}";
         logAction('retrievePhotos', $sql, 'snapshot.log');
         return static::findBySql($sql);
     }
@@ -176,7 +177,7 @@ class Snapshot extends DatabaseObject
     public static function retrievePhotoIDs($array)
     {
         global $database, $session;
-        $sql            = "SELECT id FROM snapshots AS s, permissions AS p  WHERE p.user_id={$session->user_id} AND s.group_id=p.group_id {$array['where']} ORDER BY time {$array['order']}";
+        $sql            = "SELECT id FROM snapshots AS s, permissions AS p  WHERE p.user_id={$session->user_id} AND s.group_id=p.group_id AND date(time) = '" . date("Y-m-d", strtotime($array['date'])) . "' ORDER BY time {$array['order']}";
         $result_set     = $database->query($sql);
         $photo_id_array = mysqli_fetch_all($result_set);
         return $photo_id_array;
@@ -196,7 +197,7 @@ class Snapshot extends DatabaseObject
         $arrow = ($array['order'] == 'DESC') ? '<=' : '>=';
         global $session;
         logAction('ajaxRetrievePhotos', serialize($array), 'snapshot.log');
-        $sql = "SELECT * FROM snapshots AS s, permissions AS p  WHERE p.user_id={$session->user_id} AND s.group_id=p.group_id {$array['where']} AND ID {$arrow} {$array['markerid']} ORDER BY time {$array['order']} LIMIT {$array['per_page']} OFFSET {$array['offset']}";
+        $sql = "SELECT * FROM snapshots AS s, permissions AS p  WHERE p.user_id={$session->user_id} AND s.group_id=p.group_id AND date(time) = '" . date("Y-m-d", strtotime($array['date'])) . "' AND ID {$arrow} {$array['markerid']} ORDER BY time {$array['order']} LIMIT {$array['per_page']} OFFSET {$array['offset']}";
         logAction('ajaxRetrievePhotos', $sql, 'snapshot.log');
         return static::findBySql($sql);
     }
@@ -214,7 +215,7 @@ class Snapshot extends DatabaseObject
     public static function getMarkerID($array)
     {
         global $session;
-        $sql = "SELECT * FROM snapshots AS s, permissions AS p  WHERE p.user_id={$session->user_id} AND s.group_id=p.group_id {$array['where']} ORDER BY time {$array['order']} LIMIT 1 OFFSET 0";
+        $sql = "SELECT * FROM snapshots AS s, permissions AS p  WHERE p.user_id={$session->user_id} AND s.group_id=p.group_id AND date(time) = '" . date("Y-m-d", strtotime($array['date'])) . "' ORDER BY time {$array['order']} LIMIT 1 OFFSET 0";
         logAction('getMarkerID', $sql, 'snapshot.log');
         return static::findBySql($sql)[0]->id;
     }
